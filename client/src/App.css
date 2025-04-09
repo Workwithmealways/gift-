@@ -1,0 +1,342 @@
+/* Global Reset */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: 'Poppins', sans-serif;
+  background-color: #fde2e4;
+}
+
+/* App Container - Vertical Layout */
+#root, .app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Header - Stays on Top */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #f48fb1;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  color: white;
+  font-size: 0.6rem;
+  position: relative;
+  box-shadow: 0 4px 12px rgba(244, 143, 177, 0.3);
+  padding: 1rem;
+  position: relative;
+}
+.header-center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.header-title {
+  margin: 0;
+  font-family: 'Pacifico', cursive;
+  font-size: 1.8rem;
+  color: #fff;
+}
+
+/* Main Content - Scrolls if Needed */
+.main-content {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 2rem 1rem;
+  box-sizing: border-box;
+}
+
+/* Suggestions Section - Slim & Centered */
+.suggestions-wrapper {
+  width: 100%;
+  max-width: 600px;
+}
+
+/* Suggestions List */
+.suggestions-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.suggestions-list li {
+  border-bottom: 1px solid #f8cdd3;
+  padding: 1rem 0;
+  text-align: center;
+}
+.suggestions-list h3 {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+  color: #d81b60;
+}
+.suggestions-list img {
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  object-fit: cover;
+  margin-bottom: 0.5rem;
+}
+.suggestions-list p {
+  font-size: 0.9rem;
+  color: #b85c84;
+}
+
+/* Slider Section */
+.slider-section {
+  height: 300px;
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  text-align: center;
+  background-color: #fff0f5;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(244, 143, 177, 0.3);
+}
+
+.slider-image {
+  height: 100%;
+  width: auto;
+  max-width: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+  margin: 0 auto;
+}
+
+.quote {
+  position: absolute;
+  bottom: 10px;
+  width: 100%;
+  font-style: italic;
+  font-size: 1rem;
+  color: #880e4f;
+  background-color: rgba(255, 255, 255, 0.6);
+  padding: 0.5rem;
+}
+
+/* Footer - Fixed at Bottom */
+.footer {
+  background-color: #f8bbd0;
+  padding: 6px 10px;
+  text-align: center;
+  font-size: 0.7rem;
+  color: #6a1b9a;
+  border-radius: 0 0 8px 8px;
+  width: 100%;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  z-index: 50;
+}
+
+/* Content Area */
+.content {
+  flex: 2;
+  padding: 1rem;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(244, 143, 177, 0.2);
+}
+
+/* Toggle Button */
+.toggle-btn {
+  position: absolute;
+  transform: scale(2.5);
+  border: none;
+  color: #d81b60;
+  border-radius: 100px;
+  width: 5px;
+  cursor: pointer;
+  background-color: transparent;
+  transition: background-color 0.3s ease;
+}
+.toggle-btn:hover {
+  background-color: #fce4ec;
+}
+
+/* Floating Gift Icon */
+.suggestion-toggle {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #fff0f5;
+  padding: 12px;
+  border-radius: 50%;
+  box-shadow: 0 4px 12px rgba(244, 143, 177, 0.4);
+  cursor: pointer;
+  z-index: 999;
+  transition: transform 0.3s;
+}
+.suggestion-toggle:hover {
+  transform: scale(1.1);
+}
+
+/* Tooltip */
+.tooltip {
+  position: absolute;
+  bottom: 70px;
+  right: 0;
+  background-color: #f06292;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(244, 143, 177, 0.3);
+  z-index: 1000;
+}
+
+/* Tooltip arrow */
+.tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  right: 20px;
+  margin-left: -5px;
+  border-width: 6px;
+  border-style: solid;
+  border-color: #f06292 transparent transparent transparent;
+}
+
+/* Logout Icon Top-Right */
+.logout-icon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  color: #e91e63;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+.logout-icon:hover {
+  color: #ad1457;
+}
+
+/* Logo Animation */
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #f48fb1aa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #ec407aaa);
+}
+@keyframes logo-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+/* Inputs & Button */
+input[type="text"],
+button {
+  font-size: 1rem;
+  padding: 0.75rem;
+  margin-top: 0.25rem;
+  width: 100%;
+  border: 1px solid #f8bbd0;
+  border-radius: 8px;
+  box-sizing: border-box;
+}
+button {
+  background-color: #f06292;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-weight: 500;
+}
+button:hover {
+  background-color: #ec407a;
+}
+
+/* Card Style */
+.card {
+  padding: 2em;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(244, 143, 177, 0.2);
+  margin-bottom: 2rem;
+  transition: transform 0.2s ease;
+}
+.card:hover {
+  transform: scale(1.01);
+}
+
+/* Docs Note */
+.read-the-docs {
+  color: #aa5588;
+  font-size: 0.85rem;
+}
+
+/* Responsive Fixes */
+@media (max-width: 768px) {
+  .card {
+    padding: 1rem;
+  }
+  .hydro-section {
+    flex-direction: column;
+  }
+  .sidebar {
+    align-items: stretch;
+  }
+}
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 200px;
+  background-color: #fff0f5;
+  padding: 1.5rem 1rem;
+  border-right: 2px solid #f8bbd0;
+  box-shadow: 4px 0 12px rgba(244, 143, 177, 0.2);
+  transform: translateX(-100%);
+  transition: transform 0.3s ease-in-out;
+  z-index: 100;
+}
+.sidebar.open {
+  transform: translateX(0);
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.sidebar li {
+  padding: 0.75rem 0;
+  color: #d81b60;
+  font-weight: 600;
+  border-bottom: 1px solid #f8bbd0;
+}
+
+/* Push content right when sidebar is open */
+.app-container.shift {
+  margin-left: 200px;
+  transition: margin-left 0.3s ease-in-out;
+}
+
+/* Scrollbar Style */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #fde2e4;
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(#f48fb1, #ec407a);
+  border-radius: 10px;
+}
