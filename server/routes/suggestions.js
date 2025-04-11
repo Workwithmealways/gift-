@@ -1,56 +1,96 @@
-const OpenAI = require('openai');
 const express = require('express');
+const axios = require('axios');
 const router = express.Router();
+require('dotenv').config();
 
-const openai = new OpenAI({
-  baseURL: 'https://openrouter.ai/api/v1',
-  apiKey: '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',
-  defaultHeaders: {
-    'HTTP-Referer': 'http://localhost:5173/',
-    'X-Title': 'gift-recommendation-platform',
-  },
-});
+const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY || process.env.VITE_OPENROUTER_API_KEY;
 
-router.post('/api/suggestions', async (req, res) => {
-  const { name, interests, personality, occasion } = req.body;
+router.post('/suggestions', async (req, res) => {
+  const { name, interests, personality, occasion } = req.body || {};
 
-  const prompt = `Suggest 5 unique gift ideas for someone named ${name}.
+  if (!name || !interests || !personality || !occasion) {
+    return res.status(400).json({ error: 'All fields are required' });
+  }
+
+  const prompt = `Suggest exactly 5 unique gift ideas for someone named ${name}.
 Their interests include: ${interests}.
 Personality traits: ${personality}.
 The gift is for: ${occasion}.
-Format each suggestion as:
+
+Format each suggestion STRICTLY as:
 Gift: [Name of the gift]
-Image: [Short image description for search]
-Available at: [Website like Amazon, Etsy, Flipkart]`;
+Image: [Detailed image description for search]
+Available at: [Website like Etsy, Flipkart, Notonthehighstreet, ThriveMarket]
+Price: [Number between 500-5500]
+
+Include all 5 suggestions with this exact format.`;
 
   try {
-    const completion = await openai.chat.completions.create({
-      model: 'meta-llama/llama-4-maverick:free',
-      messages: [{ role: 'user', content: prompt }],
-    });
+    const response = await axios.post(
+      'https://openrouter.ai/api/v1/chat/completions',
+      {
+        model: 'meta-llama/llama-4-maverick:free',
+        messages: [{ role: 'user', content: prompt }],
+        temperature: 0.7,
+        max_tokens: 1000
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${OPENROUTER_API_KEY}`,
+          'Content-Type': 'application/json',
+          'HTTP-Referer': 'http://localhost:5173/',
+          'X-Title': 'gift-recommendation-platform',
+        },
+      }
+    );
 
-    const content = completion.choices[0].message.content;
+    const content = response.data.choices[0].message.content;
 
     const suggestions = content
       .split(/\n(?=Gift:)/)
       .map(entry => {
         const name = entry.match(/Gift:\s*(.*)/)?.[1]?.trim();
         const imagePrompt = entry.match(/Image:\s*(.*)/)?.[1]?.trim();
-        const site = entry.match(/Available at:\s*(.*)/)?.[1]?.trim();
+        const siteMatch = entry.match(/Available at:\s*(.*)/)?.[1]?.trim();
+        const priceMatch = entry.match(/Price:\s*(.*)/)?.[1]?.trim();
+
+        // Default values for missing data
+        const site = siteMatch || 'Etsy';
+        const price = priceMatch ? parseInt(priceMatch) : Math.floor(Math.random() * 5000) + 500;
+        const searchQuery = `${imagePrompt || name} ${site} gift`.replace(/ /g,',');
 
         return {
           name,
-          imagePrompt,
-          site,
-          imageUrl: `https://source.unsplash.com/400x300/?${encodeURIComponent(imagePrompt)}`,
+          site: siteMatch || 'Etsy',
+          price: priceMatch ? parseInt(priceMatch) : Math.floor(Math.random() * 5000) + 500
         };
       })
-      .filter(g => g.name && g.imagePrompt && g.site); // remove incomplete entries
+      .filter(g => g.name) // Remove empty entries
+      .slice(0, 5); // Ensure exactly 5
 
-    res.json(suggestions);
+    // Fill remaining slots if AI returned fewer than 5
+    while (suggestions.length < 5) {
+      suggestions.push({
+        name: "Personalized Gift Box",
+        site: 'Etsy',
+        price: Math.floor(Math.random() * 5000) + 500
+      });
+    }
+
+    // Ensure no Amazon links remain
+    const cleanedSuggestions = suggestions.map(suggestion => ({
+      name: suggestion.name,
+      site: suggestion.site.replace(/amazon/gi, 'Etsy'),
+      price: suggestion.price
+    }));
+
+    return res.json(cleanedSuggestions);
   } catch (error) {
-    console.error("Error fetching suggestions:", error);
-    res.status(500).send("Failed to fetch suggestions");
+    console.error('❌ OpenRouter Error:', error.response?.data || error.message);
+    return res.status(500).json({ 
+      error: 'Failed to fetch suggestions',
+      details: error.response?.data?.error?.message || error.message
+    });
   }
 });
 
